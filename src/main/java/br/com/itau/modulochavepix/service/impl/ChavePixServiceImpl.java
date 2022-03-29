@@ -8,7 +8,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ public class ChavePixServiceImpl implements ChavePixService {
     }
 
     @Override
-    public String salvarChave(ChavePix chavePix){
+    public String salvarChave(ChavePix chavePix) throws BusinessException{
         final int mxChavePixPorPessoaFisica = 5;
         final int mxChavePixPorPessoaJuridica = 20;
 
@@ -35,16 +34,16 @@ public class ChavePixServiceImpl implements ChavePixService {
             if (repository.existsByChaveValor(chavePix.getChaveValor())){
                 throw new BusinessException("Chave Pix já cadastrada");
             }
-            if (chavePix.getTipoPessoa().equals("fisica")) {
-                if (quantidadeChavePixPorConta.get() >= mxChavePixPorPessoaFisica)
-                    throw new BusinessException("O limite de criação de chave Pix é de 5 chaves para o tipo de pessoa 'fisica'");
-            }
-            else {
-                if (quantidadeChavePixPorConta.get() >= mxChavePixPorPessoaJuridica)
-                    throw new BusinessException("O limite de criação de chave Pix é de 20 chaves para o tipo de pessoa 'juridica'.");
-            }
-        }
 
+        }
+        if (chavePix.getTipoPessoa().equals("fisica")) {
+            if (quantidadeChavePixPorConta.get() >= mxChavePixPorPessoaFisica)
+                throw new BusinessException("O limite de criação de chave Pix é de 5 chaves para o tipo de pessoa 'fisica'");
+        }
+        else {
+            if (quantidadeChavePixPorConta.get() >= mxChavePixPorPessoaJuridica)
+                throw new BusinessException("O limite de criação de chave Pix é de 20 chaves para o tipo de pessoa 'juridica'.");
+        }
         repository.save(chavePix);
         return chavePix.getIdChave();
 
@@ -73,11 +72,9 @@ public class ChavePixServiceImpl implements ChavePixService {
             if (chavePix.get().getInativaEm() != null) {
                 throw new BusinessException("A chave pix fornecida está desabilitada!");
             }
-
             chavePix.get().setInativaEm(LocalDateTime.now());
             repository.saveAndFlush(chavePix.get());
-            return chavePix.get();
-           // this.repository.deleteById(idChave);
+            return repository.getById(idChave);
         }else {
             throw new IllegalArgumentException("O id da chave pix não poder nulo.");
 
@@ -95,7 +92,7 @@ public class ChavePixServiceImpl implements ChavePixService {
     }
 
     @Override
-    public ChavePix atualizaChavePix(ChavePix chavePix) {
+    public ChavePix atualizaChavePix(ChavePix chavePix)throws BusinessException {
         Optional<ChavePix> chavePixEntity = repository.findById(chavePix.getIdChave());
         if (chavePixEntity.isPresent()) {
             if (chavePixEntity.get().getInativaEm() == null) {

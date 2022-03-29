@@ -7,7 +7,6 @@ import br.com.itau.modulochavepix.dto.AtualizaChavePixDTO;
 import br.com.itau.modulochavepix.dto.ChavePixDTO;
 import br.com.itau.modulochavepix.dto.ResponseJSONMessage;
 import br.com.itau.modulochavepix.exception.BusinessException;
-import br.com.itau.modulochavepix.exception.ValidationException;
 import br.com.itau.modulochavepix.model.entity.ChavePix;
 import br.com.itau.modulochavepix.service.ChavePixService;
 import org.modelmapper.ModelMapper;
@@ -17,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -46,7 +46,7 @@ public class ChavePixController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseJSONMessage cadastrarChavePix(@RequestBody @Valid ChavePixDTO dto) throws ValidationException {
+    public ResponseJSONMessage cadastrarChavePix(@RequestBody @Valid ChavePixDTO dto) throws BusinessException {
         validaChavePix.validar(dto);
         ChavePix chavePix = cadastraChavePix(dto);
         response.setId(service.salvarChave(chavePix));
@@ -64,16 +64,15 @@ public class ChavePixController {
     }
 
     @DeleteMapping("/{idChave}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ChavePix inativaChavePix(@PathVariable String idChave) throws IllegalAccessException {
+    @ResponseStatus(HttpStatus.OK)
+    public ChavePix inativaChavePix(@PathVariable String idChave) throws BusinessException {
         return service.inativaChavePix(idChave);
 
     }
 
     @PutMapping("/{idChave}")
-    public ChavePix atualizaChavePix (@PathVariable String idChave, AtualizaChavePixDTO dto){
-        ChavePix chavePix = cadastraChavePix(dto);
-
+    public ChavePix atualizaChavePix (@PathVariable String idChave, @Validated @RequestBody AtualizaChavePixDTO dto)throws BusinessException{
+        ChavePix chavePix = atualizaChavePix(dto);
         return service.atualizaChavePix(chavePix);
 
     }
@@ -118,15 +117,15 @@ public class ChavePixController {
         chavePix.setCadastradaEm(LocalDateTime.now());
         return chavePix;
     }
-    private ChavePix cadastraChavePix(AtualizaChavePixDTO atualizaChavePixDTO) {
+    private ChavePix atualizaChavePix(AtualizaChavePixDTO dto) {
         ChavePix chavePix = new ChavePix();
 
-        chavePix.setIdChave(atualizaChavePixDTO.getIdChave());
-        chavePix.setTipoConta(atualizaChavePixDTO.getTipoConta());
-        chavePix.setNumAgencia(atualizaChavePixDTO.getNumAgencia());
-        chavePix.setNumConta(atualizaChavePixDTO.getNumConta());
-        chavePix.setNomeCorrentista(atualizaChavePixDTO.getNomeCorrentista());
-        chavePix.setSobrenomeCorrentista(atualizaChavePixDTO.getSobrenomeCorrentista());
+        chavePix.setIdChave(dto.getIdChave());
+        chavePix.setTipoConta(dto.getTipoConta());
+        chavePix.setNumAgencia(dto.getNumAgencia());
+        chavePix.setNumConta(dto.getNumConta());
+        chavePix.setNomeCorrentista(dto.getNomeCorrentista());
+        chavePix.setSobrenomeCorrentista(dto.getSobrenomeCorrentista());
 
         return chavePix;
     }

@@ -1,5 +1,6 @@
 package br.com.itau.modulochavepix.service;
 
+import br.com.itau.modulochavepix.exception.BusinessException;
 import br.com.itau.modulochavepix.model.entity.ChavePix;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 public interface ChavePixService {
 
-    public String salvarChave(ChavePix any);
+    public String salvarChave(ChavePix any)throws BusinessException;
 
     Optional<ChavePix> getByIdChave(String idChave);
 
@@ -20,7 +21,7 @@ public interface ChavePixService {
 
     void deleteChavePix(ChavePix chavePix) ;
 
-    ChavePix atualizaChavePix(ChavePix chavePix) throws IllegalArgumentException;
+    ChavePix atualizaChavePix(ChavePix chavePix)  throws BusinessException;
 
     Page<ChavePix> busca(ChavePix filter, Pageable pageRequest);
 }

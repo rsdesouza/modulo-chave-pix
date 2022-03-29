@@ -2,7 +2,7 @@ package br.com.itau.modulochavepix.api;
 
 import br.com.itau.modulochavepix.api.validation.ChavePixValidator;
 import br.com.itau.modulochavepix.dto.ChavePixDTO;
-import br.com.itau.modulochavepix.exception.ValidationException;
+import br.com.itau.modulochavepix.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,7 @@ public class ValidaChavePix {
     @Autowired
     ChavePixValidator validator;
 
-    public void validar(ChavePixDTO dto)throws ValidationException {
+    public void validar(ChavePixDTO dto)throws BusinessException {
 
         validator.checkTipoChave(dto.getTipoChave());
         validator.checkChaveValorGenerica(dto.getChaveValor());
