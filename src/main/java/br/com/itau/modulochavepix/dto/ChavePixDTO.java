@@ -8,7 +8,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 
@@ -18,24 +17,22 @@ import java.time.LocalDateTime;
 @Builder
 public class ChavePixDTO {
 
-    @NotNull(message = "O tipo de conta é obrigatório")
+    @NotNull
     private String tipoConta;
 
     private String tipoPessoa;
-    @NotNull(message = "O número da agência é obrigatório")
+    @NotNull
     private Long numAgencia;
-    @NotNull(message = "O número da conta é obrigatório")
+    @NotNull
     private Long numConta;
-    @NotNull(message = "O nome do correntista é obrigatório")
-    @Size(max = 30, message = "O valor do nome do correntista não pode ultrapassar 30 caracteres")
+    @NotNull
     private String nomeCorrentista;
-    @Size(max = 45, message = "O valor do sobrenome do correntista não pode ultrapassar 45 caracteres")
     private String sobrenomeCorrentista;
 
     private String idChave;
-    @NotNull(message = "O tipo de chave é obrigatório")
+    @NotNull
     private String tipoChave;
-    @NotNull(message = "A chave é obrigatória")
+    @NotNull
     private String chaveValor;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
